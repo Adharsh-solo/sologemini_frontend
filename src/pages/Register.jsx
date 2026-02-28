@@ -17,23 +17,31 @@ function Register({ setIsAuthenticated }) {
 
         try {
             await registerUser(username, email, password);
-            // Auto-login after successful registration
-            await loginUser(username, password);
 
-            // Force browser to prompt for password save
-            if (window.PasswordCredential && navigator.credentials) {
-                const cred = new window.PasswordCredential({
-                    id: username,
-                    password: password,
-                    name: username
-                });
-                navigator.credentials.store(cred).catch(err => console.log('Credential store error:', err));
+            try {
+                // Auto-login after successful registration
+                await loginUser(username, password);
+
+                // Force browser to prompt for password save
+                if (window.PasswordCredential && navigator.credentials) {
+                    const cred = new window.PasswordCredential({
+                        id: username,
+                        password: password,
+                        name: username
+                    });
+                    navigator.credentials.store(cred).catch(err => console.log('Credential store error:', err));
+                }
+
+                setIsAuthenticated(true);
+                navigate('/');
+            } catch (loginErr) {
+                // Registration succeeded but auto-login failed (e.g., backend down)
+                setError('Account created successfully, but auto-login failed. Please try logging in manually.');
+                console.error("Login after registration failed:", loginErr);
             }
-
-            setIsAuthenticated(true);
-            navigate('/');
         } catch (err) {
-            setError('Failed to create account. Username might be taken.');
+            setError(err.response?.data?.username ? 'Username is already taken.' : 'Failed to create account. Please try again.');
+            console.error("Registration failed:", err);
         } finally {
             setIsLoading(false);
         }
