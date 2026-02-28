@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getAccessToken } from './auth';
 
-const API_URL = import.meta.env.VITE_BACKEND_URL || 'https://sologemini-backend1.onrender.com';
+const API_URL = import.meta.env.VITE_BACKEND_URL || 'https://sologemini-backend-1.onrender.com';
 
 const getAuthHeaders = () => {
   const token = getAccessToken();

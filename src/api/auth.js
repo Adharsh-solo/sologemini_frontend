@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_BACKEND_URL || 'https://sologemini-backend1.onrender.com';
+const API_URL = import.meta.env.VITE_BACKEND_URL || 'https://sologemini-backend-1.onrender.com';
 
 export const loginUser = async (username, password) => {
     try {
