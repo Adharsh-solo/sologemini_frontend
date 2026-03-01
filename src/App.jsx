@@ -25,23 +25,6 @@ function ChatApp({ history, setHistory, isAuthenticated }) {
   }, [location.state, setHistory]);
 
   const handleSendMessage = async (text) => {
-    // Guest Limit Logic
-    if (!isAuthenticated) {
-      const currentCount = parseInt(localStorage.getItem('guest_chat_count') || '0', 10);
-
-      if (currentCount >= 3) {
-        const userMessage = { role: 'user', parts: [{ text }] };
-        const warningMessage = {
-          role: 'model',
-          parts: [{ text: 'You have reached the guest limit of 3 messages. Please login or register to continue chatting and to save your history!' }]
-        };
-        setHistory((prev) => [...prev, userMessage, warningMessage]);
-        return;
-      }
-
-      localStorage.setItem('guest_chat_count', (currentCount + 1).toString());
-    }
-
     const userMessage = { role: 'user', parts: [{ text }] };
     setHistory((prev) => [...prev, userMessage]);
     setIsTyping(true);
@@ -84,7 +67,7 @@ function App() {
       <div className="app-container">
         <Navbar isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} onNewChat={() => setHistory([])} />
         <Routes>
-          <Route path="/" element={<ChatApp history={history} setHistory={setHistory} isAuthenticated={isAuthenticated} />} />
+          <Route path="/" element={isAuthenticated ? <ChatApp history={history} setHistory={setHistory} isAuthenticated={isAuthenticated} /> : <Navigate to="/login" />} />
           <Route path="/login" element={!isAuthenticated ? <Login setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/" />} />
           <Route path="/register" element={!isAuthenticated ? <Register setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/" />} />
           <Route path="/history" element={isAuthenticated ? <History /> : <Navigate to="/login" />} />
